@@ -1,0 +1,16 @@
+name: data_wrangling
+channels:
+  - defaults
+dependencies:
+  - jupyter=1.0.0
+  - numpy=1.14.2
+  - pandas=0.22.0
+  - pip=9.0.3
+  - python=3.6.5
+  - scipy=1.0.1
+  - seaborn=0.8.1
+  - nb_conda=2.2.0 #allows env control within jupyter notebook
+  - natsort=5.3.2 #natural sorting package
+  - pip:
+	xlrd==1.1.0 #package that pandas uses to read xls sheets into a dataframe 
+
