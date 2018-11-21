@@ -30,6 +30,12 @@ def grouped_histograms(df_data, df_group):
 
     # for every column, create a subplot.
     for i in df_data.columns:
+
+        bin_count = int(
+            (len(df[i])) ** (1 / 2))  # (# of bins) = sqaure root of number of data points, i.e., column length
+        bin_edges = np.histogram(df_data[i].dropna(), bins=bin_count)[
+            1]  # getting bin edges for all the data (all groups)
+
         n += 1
         ax = fig.add_subplot(plt_rows, 4, n)
         ax.set_title(i, fontsize=20, fontweight="bold")
@@ -37,7 +43,8 @@ def grouped_histograms(df_data, df_group):
 
         # for every group, draw a hist
         for p, color in zip(groups, colors_list):
-            ax.hist(df_data[df_group.iloc[:, 0] == p][i].dropna(), alpha=0.7, label=p, color=color)  # index by group,
+            # index by group,
+            ax.hist(df_data[df_group.iloc[:, 0] == p][i].dropna(), bins=bin_edges, alpha=0.7, label=p, color=color)
         plt.legend(fontsize=16)
 
     plt.tight_layout
