@@ -215,3 +215,47 @@ def plot_2by2(biorx_list, clms_list, df, **kwargs):
     fig.subplots_adjust(right=0.8, wspace=0.15)
 
     plt.savefig((str(clms_list) + ".png"), dpi=500)
+
+
+def calc_qp(df):
+    """
+    Calculates Cell Specific Productivity in units of pg/cell day and inserts result into a new column "Qp".
+    Must contain columns: ["Runtime", "VCD", "Titer"]
+
+    PARAMETERS
+
+    df: datframe input
+
+
+    RETURN
+
+    df: original dataframe is returned with additional column, "Qp".
+
+
+    """
+
+    df["Qp"] = np.nan  # adding column to house data
+
+    for key, grp in df.groupby(["Sample ID"]):
+        time_delta = grp["Runtime"].diff()  # getting time delta (x axis delta)
+        VCD_shift = grp["VCD"].shift()  # shifting y column to do Yn + Y(n-1) for every row
+        VCD_trapezoids = (grp["VCD"] + VCD_shift) * time_delta / 2  # area of each trapezoid
+        IVCD = VCD_trapezoids.cumsum() * (10 ** 6)  # integrated area in units cells/mL * days
+        titer_pg_ml = grp["Titer"] * (10 ** 9)  # converting titer to pg/ml
+
+        qp = titer_pg_ml / IVCD  # the result
+        ind = qp.index  # getting the index
+
+        df.loc[ind, "Qp"] = qp  # index based assignment to original df
+
+    return df
+
+
+
+#legend dictionary: optional kwarg. Adds descriptive legend to plots
+lgnd = {"R0007":"Perfusion", "R0008":"Perfusion",
+        "R0009":"Fed-Batch", "R0010":"Fed-Batch",
+        "R0011":"Perfusion, 0.2um", "R0012":"FB, control (-CB4)",
+        "R0013": "FB, 5E10 inoc (-CB4)", "R0014": "FB, 5E10 inoc (+CB4)",
+        "R0015": "Perfusion, 50kDa", "R0016":"Perfusion, 50kDa",
+       "R0017":"Fed-Batch, control", "R0018":"Fed-Batch, 5E10 inoc"}
