@@ -359,3 +359,31 @@ lgnd = {"R0007":"Perfusion", "R0008":"Perfusion",
         "R0013": "FB, 5E10 inoc (-CB4)", "R0014": "FB, 5E10 inoc (+CB4)",
         "R0015": "Perfusion, 50kDa", "R0016":"Perfusion, 50kDa",
        "R0017":"Fed-Batch, control", "R0018":"Fed-Batch, 5E10 inoc"}
+
+
+## ViCell Data merging and Runtime calculation
+"""
+
+df = pd.read_csv("BSR5.txt", delimiter = "\t", encoding = 'unicode_escape')
+
+### Changing the dataframe to more useful format ####
+df.drop_duplicates(subset = "Sample date/time", inplace = True) #dropping duplicate rows
+df["Sample date/time"]= pd.to_datetime(df["Sample date/time"]) #converting to datetime format 
+df["Sample ID"] = df["Sample ID"].str.slice(0,5) #shortening Sample ID colum to first 4 characters 
+df["File name"] = df["File name"].str.slice(0,5) #shortening "File name" column
+df.sort_values(by ="Sample date/time", inplace = True) #sorting chronologically 
+df["Runtime"] = 0 #empty column with zeros 
+
+
+for key, grp in df.groupby(["File name"]):
+    
+    time_delta = grp["Sample date/time"].diff() #time difference 
+    time_delta = time_delta.dt.total_seconds() / (24 * 60 * 60) #converting to float
+    added_time = time_delta.cumsum() #added time 
+    added_time.iloc[0] = 0 #setting the first value to zero instead of Nan 
+
+    ind = added_time.index
+
+    df.loc[ind,"Runtime"] = added_time
+
+"""
