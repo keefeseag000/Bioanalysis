@@ -210,11 +210,111 @@ def plot_2by2(biorx_list, clms_list, df, **kwargs):
 
     handles, labels = ax.get_legend_handles_labels()
 
-    fig.legend(handles, labels, bbox_to_anchor=(0.795, .644), loc="upper left", fontsize=15)
+    fig.legend(handles, labels, bbox_to_anchor=(0.8, .644), loc="upper left", fontsize=15)
     fig.tight_layout()
-    fig.subplots_adjust(right=0.8, wspace=0.15)
+    fig.subplots_adjust(right=0.795, wspace=0.15)
 
     plt.savefig((str(clms_list) + ".png"), dpi=500)
+
+
+def plot_single(biorx_list, clm, df, **kwargs):
+    """
+    ###INPUTS###
+    biorx_list:
+        list of bioreactor IDs to be plotted. Must match values in column "Sample ID"
+
+    clms:
+        str. name of column to plot.
+
+        list of relevant columns to plot:
+
+        clms_list = ['VCD', 'Viability', 'Titer', 'O2 Saturation', 'PCO2', 'Gluc', 'Lac', 'pH','NH4+','Gln', 'Glu',
+                'Na+', 'K+', 'Ca++', "Osm", 'Qp']
+
+    df:
+        dataframe must contain columns: "Sample ID", "Runtime", at least 3 from clms_list
+
+    **kwargs:
+
+    legend = dict of {"Sample ID": "legend str"}
+        example: {"R0014":"Fed-batch, control"}
+
+    xmax = int or float
+        maximum value of the x-axis (days)
+
+    """
+
+    #### plot specifications ###
+
+    # pulling variable from **kwargs
+    vari = kwargs.get("legend", None)
+    x = kwargs.get("xmax", None)
+
+    # filter data from input list
+    df = df[df["Sample ID"].isin(biorx_list)]
+
+    # filter data Runtime by xmax parameter if kwarg exists
+    if type(x) == (int or float):
+        df = df[df["Runtime"] < x + 0.5]
+    else:
+        pass
+
+    # y axis labels for each column name
+    ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
+               'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
+               'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
+               "Osm": "mOsm/kg"}
+
+    # y axis minimum
+    dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
+                 'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
+
+    # x axis parameters
+    xmin = -0.5
+
+    if type(x) == (int or float):
+        xmax = x + 0.5
+    else:
+        xmax = 14.5
+
+    #### FIGURE ####
+
+    fig, ax = plt.subplots(figsize=(14, 7.5))
+
+    for key, grp in df.groupby(['Sample ID']):
+        # clm = clms_list[i]  # column name from list, called by enumerated for loop
+
+        ax.scatter(grp['Runtime'], grp[clm], label='_nolegend_')  # Point plots
+        mask = np.isfinite(grp[clm])  # masking over NaN data (lines dont connect)
+
+        # legend based on **kwarg legend dict presence
+        if type(vari) == dict:
+            ax.plot(grp['Runtime'][mask], grp[clm][mask], label=(key + " " + vari[key]))  # line plots
+        else:
+            ax.plot(grp['Runtime'][mask], grp[clm][mask], label=(key))
+
+    ax.set_xlim(left=xmin, right=xmax)  # forcing a zero lower x limit (titer)
+
+    ax.tick_params(axis='both', which='major', labelsize=19)  # tick labels size
+
+    ax.set_ylabel(ylabels[clm], fontsize=19)  # y-axis label
+
+    ax.yaxis.grid(color='gray', linestyle='dashed')
+    ax.xaxis.grid(color='gray', linestyle='dashed')
+
+    ax.set_title(clm, fontsize=25)
+    ymin, ymax = ax.get_ylim()  # get the min and max of respective axes
+    ax.set_ylim(bottom=dict_ymin[clm], top=ymax * 1.05)  # bottom defined by dict per each param, top = max*1.05
+
+    ax.set_xlabel("Time (Days)", fontsize=19)  # x-axis label manually adding to outer
+
+    handles, labels = ax.get_legend_handles_labels()
+
+    fig.legend(handles, labels, bbox_to_anchor=(0.69, .644), loc="upper left", fontsize=15)
+    fig.tight_layout()
+    fig.subplots_adjust(right=0.69, wspace=0.15)
+
+    plt.savefig((str(clm) + ".png"), dpi=500)
 
 
 def calc_qp(df):
