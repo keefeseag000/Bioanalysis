@@ -3,6 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+#labels that are common to all plots
+
+# y axis labels for each column name
+ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
+           'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
+           'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
+           "Osm": "mOsm/kg"}
+
+# y axis minimum
+dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
+             'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
+
+
+
 def plot_3by1(biorx_list, clms_list, df, **kwargs):
     """
 ###INPUTS###
@@ -41,26 +55,16 @@ xmax = int or float
 
     # filter data Runtime by xmax parameter if kwarg exists
 
-    if type(x) == (int or float):
+    if (type(x) == int) or (type(x) == float):
         df = df[df["Runtime"] < x + 0.5]
     else:
         pass
 
 
-    # y axis labels for each column name
-    ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
-               'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
-               'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
-               "Osm": "mOsm/kg"}
-
-    # y axis minimum
-    dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
-                 'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
-
     # x axis parameters
     xmin = -0.5
 
-    if type(x) == (int or float):
+    if (type(x) == int) or (type(x) == float):
         xmax = x + 0.5
     else:
         xmax = 14.5
@@ -151,25 +155,16 @@ def plot_2by2(biorx_list, clms_list, df, **kwargs):
     df = df[df["Sample ID"].isin(biorx_list)]
 
     # filter data Runtime by xmax parameter if kwarg exists
-    if type(x) == (int or float):
+    if (type(x) == int) or (type(x) == float):
         df = df[df["Runtime"] < x + 0.5]
     else:
         pass
 
-    # y axis labels for each column name
-    ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
-               'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
-               'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
-               "Osm": "mOsm/kg"}
-
-    # y axis minimum
-    dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
-                 'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
 
     # x axis parameters
     xmin = -0.5
 
-    if type(x) == (int or float):
+    if (type(x) == int) or (type(x) == float):
         xmax = x + 0.5
     else:
         xmax = 14.5
@@ -254,32 +249,23 @@ def plot_single(biorx_list, clm, df, **kwargs):
     df = df[df["Sample ID"].isin(biorx_list)]
 
     # filter data Runtime by xmax parameter if kwarg exists
-    if type(x) == (int or float):
+    if (type(x) == int) or (type(x) == float):
         df = df[df["Runtime"] < x + 0.5]
     else:
         pass
 
-    # y axis labels for each column name
-    ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
-               'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
-               'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
-               "Osm": "mOsm/kg"}
-
-    # y axis minimum
-    dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
-                 'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
 
     # x axis parameters
     xmin = -0.5
 
-    if type(x) == (int or float):
+    if (type(x) == int) or (type(x) == float):
         xmax = x + 0.5
     else:
         xmax = 14.5
 
     #### FIGURE ####
 
-    fig, ax = plt.subplots(figsize=(14, 7.5))
+    fig, ax = plt.subplots(figsize=(15, 7.5))
 
     for key, grp in df.groupby(['Sample ID']):
         # clm = clms_list[i]  # column name from list, called by enumerated for loop
@@ -295,9 +281,9 @@ def plot_single(biorx_list, clm, df, **kwargs):
 
     ax.set_xlim(left=xmin, right=xmax)  # forcing a zero lower x limit (titer)
 
-    ax.tick_params(axis='both', which='major', labelsize=19)  # tick labels size
+    ax.tick_params(axis='both', which='major', labelsize=24)  # tick labels size
 
-    ax.set_ylabel(ylabels[clm], fontsize=19)  # y-axis label
+    ax.set_ylabel(ylabels[clm], fontsize=24)  # y-axis label
 
     ax.yaxis.grid(color='gray', linestyle='dashed')
     ax.xaxis.grid(color='gray', linestyle='dashed')
@@ -306,15 +292,16 @@ def plot_single(biorx_list, clm, df, **kwargs):
     ymin, ymax = ax.get_ylim()  # get the min and max of respective axes
     ax.set_ylim(bottom=dict_ymin[clm], top=ymax * 1.05)  # bottom defined by dict per each param, top = max*1.05
 
-    ax.set_xlabel("Time (Days)", fontsize=19)  # x-axis label manually adding to outer
+    ax.set_xlabel("Time (Days)", fontsize=24)  # x-axis label manually adding to outer
 
     handles, labels = ax.get_legend_handles_labels()
 
-    fig.legend(handles, labels, bbox_to_anchor=(0.69, .644), loc="upper left", fontsize=15)
+    fig.legend(handles, labels, bbox_to_anchor=(0.70, .644), loc="upper left", fontsize=20)
     fig.tight_layout()
-    fig.subplots_adjust(right=0.69, wspace=0.15)
+    fig.subplots_adjust(right=0.70, wspace=0.15)
 
-    plt.savefig((str(clm) + ".png"), dpi=500)
+
+    plt.savefig((str(clm) + ".png"), dpi=500, bbox_inches='tight')
 
 
 def calc_qp(df):
@@ -358,7 +345,45 @@ lgnd = {"R0007":"Perfusion", "R0008":"Perfusion",
         "R0011":"Perfusion, 0.2um", "R0012":"FB, control (-CB4)",
         "R0013": "FB, 5E10 inoc (-CB4)", "R0014": "FB, 5E10 inoc (+CB4)",
         "R0015": "Perfusion, 50kDa", "R0016":"Perfusion, 50kDa",
-       "R0017":"Fed-Batch, control", "R0018":"Fed-Batch, 5E10 inoc"}
+       "R0017":"Fed-Batch, control (+CB4)", "R0018":"Fed-Batch, 5E10 inoc"}
+
+#Importing ViCell Excell data into a useful dataframe:
+
+
+"""
+#Getting list of strs from rows 3 and 4. These are the column headers that ViCell split into 2 rows.
+
+clms_list1 = []
+clms_list2 = []
+for i in df.loc[3,:]:
+    clms_list1.append(i)
+for i in df.loc[4,:]:
+    clms_list2.append(i)
+    
+#Combining the strings from rows 3 and 4 to be the new column name 
+
+combined = []
+for i,j in zip(clms_list1, clms_list2):
+    if (type(i) == str) and (type(j) == str):    
+        combined.append(i+j)
+    else:
+        combined.append(i)
+
+df.columns = combined #setting the columns to combined strings from rows 3 and 4
+
+#dropping first 6 rows and resetting index
+
+df.drop(df.index[0:6], inplace = True)
+df.reset_index(inplace = True, drop = True)
+
+#isolating columns of interest, converting datatpes
+
+df = df.loc[:,['Sample ID', 'File name','Sample date/time','Viability(%)','Viable cells/ml (x10^6)','Comment']]
+df = df.apply(pd.to_numeric, errors = "ignore")
+df['Sample date/time'] = pd.to_datetime(df['Sample date/time'])
+
+"""
+
 
 
 ## ViCell Data merging and Runtime calculation
