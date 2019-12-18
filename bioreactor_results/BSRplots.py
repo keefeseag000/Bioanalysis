@@ -3,19 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-#labels that are common to all plots
-
-# y axis labels for each column name
-ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
-           'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
-           'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
-           "Osm": "mOsm/kg"}
-
-# y axis minimum
-dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
-             'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
-
-
 
 def plot_3by1(biorx_list, clms_list, df, **kwargs):
     """
@@ -91,6 +78,7 @@ xmax = int or float
             else:
                 ax.plot(grp['Runtime'][mask], grp[i][mask], label=(key))
 
+        ax.xaxis.set_ticks(np.arange(0, 30, 2)) #forcing ticks, every even value
         ax.set_xlim(left=xmin, right=xmax)  # forcing a zero lower x limit (titer)
         ax.tick_params(axis='both', which='major', labelsize=15)  # tick labels size
         ax.set_ylabel(ylabels[i], fontsize=15)  # y-axis label
@@ -171,7 +159,7 @@ def plot_2by2(biorx_list, clms_list, df, **kwargs):
 
     #### FIGURE ####
 
-    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 10))
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(21, 10))
 
     for i, ax in enumerate(fig.axes):
 
@@ -187,6 +175,7 @@ def plot_2by2(biorx_list, clms_list, df, **kwargs):
             else:
                 ax.plot(grp['Runtime'][mask], grp[clm][mask], label=(key))
 
+        ax.xaxis.set_ticks(np.arange(0, 30, 2))
         ax.set_xlim(left=xmin, right=xmax)  # forcing a zero lower x limit (titer)
 
         ax.tick_params(axis='both', which='major', labelsize=19)  # tick labels size
@@ -205,9 +194,9 @@ def plot_2by2(biorx_list, clms_list, df, **kwargs):
 
     handles, labels = ax.get_legend_handles_labels()
 
-    fig.legend(handles, labels, bbox_to_anchor=(0.8, .644), loc="upper left", fontsize=15)
+    fig.legend(handles, labels, bbox_to_anchor=(0.795, .644), loc="upper left", fontsize=15)
     fig.tight_layout()
-    fig.subplots_adjust(right=0.795, wspace=0.15)
+    fig.subplots_adjust(right=0.79, wspace=0.15)
 
     plt.savefig((str(clms_list) + ".png"), dpi=500)
 
@@ -279,6 +268,7 @@ def plot_single(biorx_list, clm, df, **kwargs):
         else:
             ax.plot(grp['Runtime'][mask], grp[clm][mask], label=(key))
 
+    ax.xaxis.set_ticks(np.arange(0, 30, 2))
     ax.set_xlim(left=xmin, right=xmax)  # forcing a zero lower x limit (titer)
 
     ax.tick_params(axis='both', which='major', labelsize=24)  # tick labels size
@@ -338,6 +328,29 @@ def calc_qp(df):
     return df
 
 
+#labels that are common to all plots
+
+# y axis labels for each column name
+ylabels = {'VCD': "10E6 Cells/mL", 'Viability': "% Viable", 'Titer': "g/L", 'O2 Saturation': "% Air Saturation",
+           'PCO2': "mmHg", 'Gluc': "g/L", 'Lac': "g/L", 'pH': "pH", 'NH4+': "mmol/L", 'Gln': "mmol/L",
+           'Glu': "mmol/L", 'Na+': "mmol/L", 'K+': "mmol/L", 'Ca++': "mmol/L", "Qp": "pg/cell day",
+           "Osm": "mOsm/kg"}
+
+# y axis minimum
+dict_ymin = {'VCD': 0, 'Viability': 40, 'Titer': 0, 'O2 Saturation': 0, 'PCO2': 0, "Osm": 250,
+             'Gluc': 0, 'Lac': 0, 'pH': 6.4, 'NH4+': 0, 'Gln': 0, 'Glu': 0, 'Na+': 0, 'K+': 0, 'Ca++': 0, "Qp": 0}
+
+
+#Generic 3-pane and 4 pane plots to run plot functions in for loop
+fig1 = ['VCD', 'Viability', 'Titer']
+fig2 = ['VCD', 'Viability', 'Titer', "Qp"]
+fig3 = ['Gluc', 'Lac',"Osm",'PCO2']
+fig4 = ['Gln', 'Glu','pH','NH4+']
+fig5 = ['Na+', 'K+', 'Ca++']
+
+list_3pane = [fig1, fig5]
+list_4pane = [fig2, fig3, fig4]
+
 
 #legend dictionary: optional kwarg. Adds descriptive legend to plots
 lgnd = {"R0007":"Perfusion", "R0008":"Perfusion",
@@ -347,68 +360,4 @@ lgnd = {"R0007":"Perfusion", "R0008":"Perfusion",
         "R0015": "Perfusion, 50kDa", "R0016":"Perfusion, 50kDa",
        "R0017":"Fed-Batch, control (+CB4)", "R0018":"Fed-Batch, 5E10 inoc"}
 
-#Importing ViCell Excell data into a useful dataframe:
 
-
-"""
-#Getting list of strs from rows 3 and 4. These are the column headers that ViCell split into 2 rows.
-
-clms_list1 = []
-clms_list2 = []
-for i in df.loc[3,:]:
-    clms_list1.append(i)
-for i in df.loc[4,:]:
-    clms_list2.append(i)
-    
-#Combining the strings from rows 3 and 4 to be the new column name 
-
-combined = []
-for i,j in zip(clms_list1, clms_list2):
-    if (type(i) == str) and (type(j) == str):    
-        combined.append(i+j)
-    else:
-        combined.append(i)
-
-df.columns = combined #setting the columns to combined strings from rows 3 and 4
-
-#dropping first 6 rows and resetting index
-
-df.drop(df.index[0:6], inplace = True)
-df.reset_index(inplace = True, drop = True)
-
-#isolating columns of interest, converting datatpes
-
-df = df.loc[:,['Sample ID', 'File name','Sample date/time','Viability(%)','Viable cells/ml (x10^6)','Comment']]
-df = df.apply(pd.to_numeric, errors = "ignore")
-df['Sample date/time'] = pd.to_datetime(df['Sample date/time'])
-
-"""
-
-
-
-## ViCell Data merging and Runtime calculation
-"""
-
-df = pd.read_csv("BSR5.txt", delimiter = "\t", encoding = 'unicode_escape')
-
-### Changing the dataframe to more useful format ####
-df.drop_duplicates(subset = "Sample date/time", inplace = True) #dropping duplicate rows
-df["Sample date/time"]= pd.to_datetime(df["Sample date/time"]) #converting to datetime format 
-df["Sample ID"] = df["Sample ID"].str.slice(0,5) #shortening Sample ID colum to first 4 characters 
-df["File name"] = df["File name"].str.slice(0,5) #shortening "File name" column
-df.sort_values(by ="Sample date/time", inplace = True) #sorting chronologically 
-df["Runtime"] = 0 #empty column with zeros 
-
-
-for key, grp in df.groupby(["File name"]):
-    
-    time_delta = grp["Sample date/time"].diff() #time difference 
-    time_delta = time_delta.dt.total_seconds() / (24 * 60 * 60) #converting to float
-    added_time = time_delta.cumsum() #added time 
-    added_time.iloc[0] = 0 #setting the first value to zero instead of Nan 
-
-    ind = added_time.index
-
-    df.loc[ind,"Runtime"] = added_time
-
-"""
