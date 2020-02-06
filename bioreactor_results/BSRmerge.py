@@ -283,9 +283,9 @@ def flex_merge(D_df):
               inplace=True)
 
     # Samples Dates range:
-    min = df["Flex date/time"].min()
-    max = df["Flex date/time"].max()
-    print("Sample date range: " + str(datetime.datetime.date(min)) + " - " + str(datetime.datetime.date(max)))
+    min_ = df["Flex date/time"].min()
+    max_ = df["Flex date/time"].max()
+    print("Sample date range: " + str(datetime.datetime.date(min_)) + " - " + str(datetime.datetime.date(max_)))
 
     # Unique samples
     print("Unique sample ID's: " + str(df["Flex Sample ID"].unique()))
@@ -405,4 +405,37 @@ def calc_runtime(df):
 
     return df
 
+def calc_qp(df):
+    """
+    Calculates Cell Specific Productivity in units of pg/cell day and inserts result into a new column "Qp".
+    Must contain columns: ["Runtime", "VCD", "Titer"]
 
+    PARAMETERS
+
+    df: datframe input
+
+
+    RETURN
+
+    df: original dataframe is returned with additional column, "Qp".
+
+
+    """
+
+    df["Qp"] = np.nan  # adding column to house data
+
+    for key, grp in df.groupby(["Sample ID"]):
+        temp = grp[grp["VCD"].notnull()]
+
+        time_delta = temp["Runtime"].diff()  # getting time delta (x axis delta)
+        VCD_shift = temp["VCD"].shift()  # shifting y column to do Yn + Y(n-1) for every row
+        VCD_trapezoids = (temp["VCD"] + VCD_shift) * time_delta / 2  # area of each trapezoid
+        IVCD = VCD_trapezoids.cumsum() * (10 ** 6)  # integrated area in units cells/mL * days
+        titer_pg_ml = temp["Titer"] * (10 ** 9)  # converting titer to pg/ml
+
+        qp = titer_pg_ml / IVCD  # the result
+        ind = qp.index  # getting the index
+
+        df.loc[ind, "Qp"] = qp  # index based assignment to original df
+
+    return df
