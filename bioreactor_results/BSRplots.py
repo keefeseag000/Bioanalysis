@@ -329,7 +329,8 @@ lgnd = {
         "R0013": "FB, 5E10 inoc (-CB4)", "R0014": "FB, 5E10 inoc (+CB4)",
         "R0015": "Perfusion, 50kDa", "R0016":"Perfusion, 50kDa",
         "R0017":"Fed-Batch, control (+CB4)", "R0018":"Fed-Batch, 5E10 inoc",
-        "R0019":"Perfusion, 50kDa", "R0020":"Perfusion, 50kDa", "R0021": "Perfsuion, 0.2um", "R0022":"Perfsuion, 0.2um"
-        }
+        "R0019":"Perfusion, 50kDa", "R0020":"Perfusion, 50kDa", "R0021": "Perfsuion, 0.2um", "R0022":"Perfsuion, 0.2um",
+        "R0023":"Perfsuion, 0.2um", "R0024":"Perfusion, 50kDa", "R0025":"Perfusion, 50kDa", "R0026": "Perfusion 50kDa"}
+
 
 
